@@ -1,22 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   handler_error.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 12:55:03 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/09 14:23:19 by fevunge          ###   ########.fr       */
+/*   Created: 2026/03/09 13:50:15 by fevunge           #+#    #+#             */
+/*   Updated: 2026/03/09 14:54:48 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philo.h"
+#include "../../../include/philo.h"
 
-int	main(int argc, char const *argv[])
+void	handler_error(int error, const char *message)
 {
-	t_args	arguments;
-
-	arguments = get_args(argc, argv);
-	validate_args(arguments);
-	return (0);
+	if (error == BAD_ARGUMENT_ERROR)
+		write(2, "THE ARGUMENTS ARE NOT VALIDS\n", 30);
+	write(2, message, string_len(message));
+	exit(1);
 }

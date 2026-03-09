@@ -1,22 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   validate_args.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 12:55:03 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/09 14:23:19 by fevunge          ###   ########.fr       */
+/*   Created: 2026/03/09 13:46:37 by fevunge           #+#    #+#             */
+/*   Updated: 2026/03/09 14:54:41 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philo.h"
+#include "../../../include/philo.h"
+#define ERROR_MESSAGE "The program expects one or more philosophers."
 
-int	main(int argc, char const *argv[])
+int	validate_args(t_args args)
 {
-	t_args	arguments;
-
-	arguments = get_args(argc, argv);
-	validate_args(arguments);
+	if (args.number_of_philosophers < 1)
+		handler_error(BAD_ARGUMENT_ERROR, ERROR_MESSAGE);
 	return (0);
 }

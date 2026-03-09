@@ -6,17 +6,17 @@
 #    By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/09 12:59:39 by fevunge           #+#    #+#              #
-#    Updated: 2026/03/09 13:05:44 by fevunge          ###   ########.fr        #
+#    Updated: 2026/03/09 14:42:55 by fevunge          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
-INCLUDE_DIR=include/
-SOURCE_DIR=src/
+
 
 CC=cc
+NAME=philo
+SOURCE_DIR=src
 CFLAGS=-Wall -Werror -Wextra
-INCFLAGS=-I$(INCLUDE_DIR)
 
 INC=$(INCLUDE_DIR)/philo.h		\
 	$(INCLUDE_DIR)/util.h		\
@@ -24,21 +24,22 @@ INC=$(INCLUDE_DIR)/philo.h		\
 	$(INCLUDE_DIR)/service.h	\
 	$(INCLUDE_DIR)/resource.h	\
 
-SRC=$(SOURCE_DIR)/philo.c	\
-	$(SOURCE_DIR)/util/		\
-	$(SOURCE_DIR)/handler/	\
-	$(SOURCE_DIR)/service/	\
-	$(SOURCE_DIR)/resource/	\
+SRC=$(SOURCE_DIR)/philo.c \
+	$(SOURCE_DIR)/util/string_to_int.c \
+	$(SOURCE_DIR)/util/string_len.c \
+	$(SOURCE_DIR)/handler/error/handler_error.c \
+	$(SOURCE_DIR)/handler/in/get_args.c \
+	$(SOURCE_DIR)/handler/in/validate_args.c 
+#	$(SOURCE_DIR)/service/ \
+#	$(SOURCE_DIR)/resource/ \
 
 OBJ=$(SRC:.c=.o)
 
 
-NAME=philo
-
 all: $(NAME)
 
-$(NAME): $(OBJ) $(INC)
-	$(CC) $(CFLAGS) $(INCFLAGS) $(OBJ) -o $(NAME)
+$(NAME): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
 clean:
 	rm -rf $(OBJ)

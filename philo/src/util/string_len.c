@@ -1,22 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   string_len.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 12:55:03 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/09 14:23:19 by fevunge          ###   ########.fr       */
+/*   Created: 2026/03/09 13:54:17 by fevunge           #+#    #+#             */
+/*   Updated: 2026/03/09 14:51:45 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philo.h"
+#include "../../include/philo.h"
 
-int	main(int argc, char const *argv[])
+size_t	string_len(const char *str)
 {
-	t_args	arguments;
+	size_t	len;
 
-	arguments = get_args(argc, argv);
-	validate_args(arguments);
-	return (0);
+	len = 0;
+	if (str)
+	{
+		while (str[len])
+			len++;
+	}
+	return (len);
 }

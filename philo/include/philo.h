@@ -6,12 +6,14 @@
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 13:33:18 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/09 13:33:19 by fevunge          ###   ########.fr       */
+/*   Updated: 2026/03/09 14:32:46 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
 # include "handler.h"
+# include "util.h"
+# include <limits.h>
 
 #endif 
