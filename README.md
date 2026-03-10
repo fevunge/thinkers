@@ -1,6 +1,6 @@
 *This project has been created as part of the 42 curriculum by fevunge*
 
-# Thinkers
+# Philosophers
 
 ## Overview
 
@@ -52,6 +52,8 @@ Here are the key things you need to know to succeed in this assignment:
 
 
 ## Description
+
+
 
 ## Instructions 
 

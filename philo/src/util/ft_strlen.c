@@ -1,18 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   ft_strlen.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 18:29:48 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/09 18:36:26 by fevunge          ###   ########.fr       */
+/*   Created: 2026/03/09 13:54:17 by fevunge           #+#    #+#             */
+/*   Updated: 2026/03/09 14:51:45 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philo.h"
+#include "../../include/philo.h"
 
-void	call_philos_to_dinner(t_philo *philos, t_dinner *dinner)
+size_t ft_strlen(const char *str)
 {
-	return ;
+	size_t len;
+
+	len = 0;
+	if (str)
+	{
+		while (str[len])
+			len++;
+	}
+	return (len);
 }

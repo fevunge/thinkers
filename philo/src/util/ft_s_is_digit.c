@@ -1,21 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   validate_args.c                                    :+:      :+:    :+:   */
+/*   ft_s_is_digit.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 13:46:37 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/09 14:54:41 by fevunge          ###   ########.fr       */
+/*   Created: 2026/03/09 19:31:52 by fevunge           #+#    #+#             */
+/*   Updated: 2026/03/09 19:34:20 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../include/philo.h"
-#define ERROR_MESSAGE "The program expects one or more philosophers."
+#include "../../include/philo.h"
 
-int	validate_args(t_args args)
+static t_bool is_digit(unsigned char c)
 {
-	if (args.number_of_philosophers < 1)
-		handler_error(BAD_ARGUMENT_ERROR, ERROR_MESSAGE);
-	return (0);
+	return (c <= '9' && c >= '0');
+}
+
+
+t_bool	ft_s_is_digit(const char *message)
+{
+	if (!message)
+		return (FALSE);
+	while (*message)
+	{
+		message++;
+		if (!is_digit(*message))
+			return (FALSE);
+	}
+	return (TRUE);
 }

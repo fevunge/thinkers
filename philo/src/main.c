@@ -1,26 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   string_len.c                                       :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 13:54:17 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/09 14:51:45 by fevunge          ###   ########.fr       */
+/*   Created: 2026/03/09 12:55:03 by fevunge           #+#    #+#             */
+/*   Updated: 2026/03/09 18:35:48 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/philo.h"
+#include "../include/philo.h"
 
-size_t	string_len(const char *str)
+int	main(int argc, char const *argv[])
 {
-	size_t	len;
+	t_args		arguments;
+	t_philo		*philos;
+	t_dinner	dinner;
 
-	len = 0;
-	if (str)
-	{
-		while (str[len])
-			len++;
-	}
-	return (len);
+	arguments = get_args(argc, argv);
+	validate_args(arguments);
+	dinner.args = arguments;
+	call_philos_to_dinner(philos, &dinner);
+	start_dinner(&dinner);
+	finish_dinner(&dinner);
+	return (0);
 }

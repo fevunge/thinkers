@@ -1,26 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util.h                                             :+:      :+:    :+:   */
+/*   get_error.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 13:54:27 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/09 14:51:17 by fevunge          ###   ########.fr       */
+/*   Created: 2026/03/09 13:50:15 by fevunge           #+#    #+#             */
+/*   Updated: 2026/03/09 18:53:38 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTIL_H
-# define UTIL_H
-# define TRUE 1
-# define TRUE 1
-# define SIGNAL_PLUS '+'
-# define SIGNAL_MINUS '-'
-# include <sys/types.h>
+#include "../../include/philo.h"
 
-typedef unsigned int	t_bool;
-typedef unsigned char	t_signal;
-
-size_t	string_len(const char *str);
-int		string_to_int(const char *str);
-#endif
+void get_error(int error, const char *message)
+{
+	if (error == ARGUMENT_ERROR)
+		write(2, "THE ARGUMENTS ARE NOT VALIDS\n", 30);
+	write(2, message, ft_strlen(message));
+	exit(1);
+}

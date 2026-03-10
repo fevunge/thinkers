@@ -6,32 +6,28 @@
 #    By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/09 12:59:39 by fevunge           #+#    #+#              #
-#    Updated: 2026/03/09 14:42:55 by fevunge          ###   ########.fr        #
+#    Updated: 2026/03/09 19:43:08 by fevunge          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
-
-
 
 CC=cc
 NAME=philo
 SOURCE_DIR=src
+UTIL_DIR=$(SOURCE_DIR)/util
+IO_DIR$(SOURCE_DIR)/io
 CFLAGS=-Wall -Werror -Wextra
 
-INC=$(INCLUDE_DIR)/philo.h		\
-	$(INCLUDE_DIR)/util.h		\
-	$(INCLUDE_DIR)/handler.h	\
-	$(INCLUDE_DIR)/service.h	\
-	$(INCLUDE_DIR)/resource.h	\
+INC=$(INCLUDE_DIR)/philo.h
 
-SRC=$(SOURCE_DIR)/philo.c \
-	$(SOURCE_DIR)/util/string_to_int.c \
-	$(SOURCE_DIR)/util/string_len.c \
-	$(SOURCE_DIR)/handler/error/handler_error.c \
-	$(SOURCE_DIR)/handler/in/get_args.c \
-	$(SOURCE_DIR)/handler/in/validate_args.c 
-#	$(SOURCE_DIR)/service/ \
-#	$(SOURCE_DIR)/resource/ \
+SRC=$(SOURCE_DIR)/main.c \
+	$(SOURCE_DIR)/dinner.c \
+	$(SOURCE_DIR)/waiter.c \
+	$(UTIL_DIR)/ft_atoi.c \
+	$(UTIL_DIR)/ft_strlen.c \
+	$(UTIL_DIR)/ft_s_is_digit.c \
+	$(IO_DIR)/get_args.c \
+	$(IO_DIR)/get_error.c \
+	$(IO_DIR)/get_log.c \
 
 OBJ=$(SRC:.c=.o)
 
