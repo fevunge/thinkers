@@ -18,7 +18,7 @@ void	get_log(t_philo *philo, const char *log_message)
 
 	pthread_mutex_lock(philo->resources.write_lock);
 	age = ft_time_now() - philo->born_at;
-	printf("%ld %d %s", age, philo->id, log_message);
+	printf("%ld %d %s\n", age, philo->id, log_message);
 	pthread_mutex_unlock(philo->resources.write_lock);
 	return ;
 }
