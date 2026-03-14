@@ -26,8 +26,12 @@ void	call_philos_to_dinner(t_dinner *dinner)
 		dinner->philos[id].eat = dinner->args.time_to_eat;
 		dinner->philos[id].sleep = dinner->args.time_to_sleep;
 		dinner->philos[id].must_eat = dinner->args.times_must_eat;
+		dinner->philos[id].eaten = 0;
 		dinner->philos[id].resources.left_fork = dinner->forks + id;
-		dinner->philos[id].resources.right_fork = (void *)0;
+		if (id == 0)
+			dinner->philos[id].resources.right_fork = dinner->forks + dinner->args.number_of_philos - 1;
+		else
+			dinner->philos[id].resources.right_fork = dinner->forks + id - 1;
 		dinner->philos[id].resources.write_lock = dinner->write_lock;
 		dinner->philos[id].resources.meal_lock = dinner->meal_lock;
 		id++;
@@ -42,11 +46,7 @@ void	*philo_start_launch(void *arg)
 	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
 		ft_usleep(1);
-	pthread_mutex_lock(philo->resources.meal_lock);
-	philo->born_at = ft_time_now();
-	philo->last_meal = ft_time_now();
-	pthread_mutex_unlock(philo->resources.meal_lock);
-	while (1)
+	while (TRUE)
 		philo_launch(philo);
 	return (NULL);
 }
@@ -55,6 +55,12 @@ void	philo_launch(t_philo *philo)
 {
 	pthread_mutex_lock(philo->resources.left_fork);
 	get_log(philo, TAKE_FORK_LOG);
+	if (philo->resources.left_fork == philo->resources.right_fork)
+	{
+		ft_usleep(philo->die * 2);
+		pthread_mutex_unlock(philo->resources.left_fork);
+		return ;
+	}
 	pthread_mutex_lock(philo->resources.right_fork);
 	get_log(philo, TAKE_FORK_LOG);
 	pthread_mutex_lock(philo->resources.meal_lock);
