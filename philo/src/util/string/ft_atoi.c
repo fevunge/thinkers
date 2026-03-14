@@ -10,40 +10,42 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/philo.h"
+#include "philo.h"
 
-static t_bool is_space(unsigned char c)
+static t_bool	is_space(char c)
 {
 	if (c == 32)
 		return (1);
 	return (c <= 13 && c >= 9);
 }
 
-static t_bool is_signal(unsigned char c)
+static t_bool	is_signal(char c)
 {
 	return (c == SIGNAL_PLUS || c == SIGNAL_MINUS);
 }
 
-static t_bool is_digit(unsigned char c)
+static t_bool	is_digit(char c)
 {
 	return (c <= '9' && c >= '0');
 }
 
-int ft_atoi(const char *str)
+long	ft_atoi(const char *str)
 {
-	int number;
-	t_signal sign;
+	long		number;
+	t_signal	sign;
 
 	sign = 1;
 	number = 0;
-	while (is_space((unsigned char)*str))
+	if (!str)
+		return (number);
+	while (is_space(*str))
 		str++;
 	if (is_signal(*str))
 	{
 		sign = *str - 44;
 		str++;
 	}
-	while (is_digit((unsigned char)*str))
+	while (is_digit(*str))
 	{
 		number = number * 10 + (*str - '0');
 		str++;

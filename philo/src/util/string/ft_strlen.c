@@ -1,24 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_log.c                                          :+:      :+:    :+:   */
+/*   ft_strlen.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 19:42:01 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/14 14:07:59 by fevunge          ###   ########.fr       */
+/*   Created: 2026/03/09 13:54:17 by fevunge           #+#    #+#             */
+/*   Updated: 2026/03/09 14:51:45 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	get_log(t_philo *philo, const char *log_message)
+size_t	ft_strlen(const char *str)
 {
-	t_milisecond	age;
+	size_t	len;
 
-	pthread_mutex_lock(philo->resources.write_lock);
-	age = ft_time_now() - philo->born_at;
-	printf("%ld %d %s", age, philo->id, log_message);
-	pthread_mutex_unlock(philo->resources.write_lock);
-	return ;
+	len = 0;
+	if (str)
+	{
+		while (str[len])
+			len++;
+	}
+	return (len);
 }

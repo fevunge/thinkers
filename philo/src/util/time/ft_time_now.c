@@ -1,24 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_log.c                                          :+:      :+:    :+:   */
+/*   ft_time_now.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 19:42:01 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/14 14:07:59 by fevunge          ###   ########.fr       */
+/*   Created: 2026/03/11 18:58:18 by fevunge           #+#    #+#             */
+/*   Updated: 2026/03/14 13:34:18 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	get_log(t_philo *philo, const char *log_message)
+t_milisecond	ft_time_now(void)
 {
-	t_milisecond	age;
+	struct timeval	time;
 
-	pthread_mutex_lock(philo->resources.write_lock);
-	age = ft_time_now() - philo->born_at;
-	printf("%ld %d %s", age, philo->id, log_message);
-	pthread_mutex_unlock(philo->resources.write_lock);
-	return ;
+	if (gettimeofday(&time, NULL) == -1)
+		get_error(UKNOW_ERROR, "Error getting time from gettimeofday() func\n");
+	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }

@@ -1,26 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                       :+:      :+:    :+:   */
+/*   ft_s_is_digit.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 13:54:17 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/09 14:51:45 by fevunge          ###   ########.fr       */
+/*   Created: 2026/03/09 19:31:52 by fevunge           #+#    #+#             */
+/*   Updated: 2026/03/14 14:52:01 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/philo.h"
+#include "philo.h"
 
-size_t ft_strlen(const char *str)
+static t_bool	is_digit(unsigned char c)
 {
-	size_t len;
+	return (c <= '9' && c >= '0');
+}
 
-	len = 0;
-	if (str)
+t_bool	ft_s_is_digit(const char *message)
+{
+	int	i;
+
+	i = 0;
+	if (!message)
+		return (FALSE);
+	while (message[i])
 	{
-		while (str[len])
-			len++;
+		if (!is_digit(message[i]))
+			return (FALSE);
+		i++;
 	}
-	return (len);
+	return (TRUE);
 }

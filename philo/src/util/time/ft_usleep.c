@@ -1,32 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_s_is_digit.c                                    :+:      :+:    :+:   */
+/*   ft_usleep.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 19:31:52 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/09 19:34:20 by fevunge          ###   ########.fr       */
+/*   Created: 2026/03/14 13:16:17 by fevunge           #+#    #+#             */
+/*   Updated: 2026/03/14 13:31:34 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/philo.h"
+#include "philo.h"
 
-static t_bool is_digit(unsigned char c)
+void	ft_usleep(t_milisecond mls)
 {
-	return (c <= '9' && c >= '0');
-}
+	t_milisecond	start;
 
-
-t_bool	ft_s_is_digit(const char *message)
-{
-	if (!message)
-		return (FALSE);
-	while (*message)
-	{
-		message++;
-		if (!is_digit(*message))
-			return (FALSE);
-	}
-	return (TRUE);
+	start = ft_time_now();
+	while (ft_time_now() - start < mls)
+		usleep(500);
 }

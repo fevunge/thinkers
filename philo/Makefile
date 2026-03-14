@@ -6,7 +6,7 @@
 #    By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/03/09 12:59:39 by fevunge           #+#    #+#              #
-#    Updated: 2026/03/09 19:43:08 by fevunge          ###   ########.fr        #
+#    Updated: 2026/03/14 14:34:50 by fevunge          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,23 +14,28 @@ CC=cc
 NAME=philo
 SOURCE_DIR=src
 UTIL_DIR=$(SOURCE_DIR)/util
-IO_DIR$(SOURCE_DIR)/io
-CFLAGS=-Wall -Werror -Wextra
+STRING_UTIL_DIR=$(UTIL_DIR)/string
+TIME_UTIL_DIR=$(UTIL_DIR)/time
+IO_DIR=$(SOURCE_DIR)/io
+
+CFLAGS=-Wall -Werror -Wextra -Iinclude/
 
 INC=$(INCLUDE_DIR)/philo.h
 
 SRC=$(SOURCE_DIR)/main.c \
 	$(SOURCE_DIR)/dinner.c \
 	$(SOURCE_DIR)/waiter.c \
-	$(UTIL_DIR)/ft_atoi.c \
-	$(UTIL_DIR)/ft_strlen.c \
-	$(UTIL_DIR)/ft_s_is_digit.c \
+	$(SOURCE_DIR)/philo.c \
+	$(STRING_UTIL_DIR)/ft_atoi.c \
+	$(STRING_UTIL_DIR)/ft_strlen.c \
+	$(STRING_UTIL_DIR)/ft_s_is_digit.c \
+	$(TIME_UTIL_DIR)/ft_time_now.c \
+	$(TIME_UTIL_DIR)/ft_usleep.c \
 	$(IO_DIR)/get_args.c \
 	$(IO_DIR)/get_error.c \
-	$(IO_DIR)/get_log.c \
+	$(IO_DIR)/get_log.c 
 
 OBJ=$(SRC:.c=.o)
-
 
 all: $(NAME)
 
