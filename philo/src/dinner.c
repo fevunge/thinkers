@@ -19,7 +19,7 @@ static void	provide_forks(t_dinner *dinner)
 	i = 0;
 	while (i < dinner->args.number_of_philos)
 	{
-		if (!pthread_mutex_init((&dinner->forks)[i], NULL))
+		if (pthread_mutex_init(&dinner->forks[i], NULL) != 0)
 			finish_dinner(dinner);
 		i++;
 	}
@@ -38,9 +38,15 @@ void	mise_en_place(t_dinner *dinner)
 	dinner->philos = malloc(sizeof(t_philo) * fork_quantity);
 	if (!dinner->philos)
 		get_error(MEMORY_ERROR, "Error while allocating philos");
-	if (!pthread_mutex_init(dinner->write_lock, NULL))
+	dinner->write_lock = malloc(sizeof(pthread_mutex_t));
+	if (!dinner->write_lock)
+		get_error(MEMORY_ERROR, "Error while allocating write lock");
+	dinner->meal_lock = malloc(sizeof(pthread_mutex_t));
+	if (!dinner->meal_lock)
+		get_error(MEMORY_ERROR, "Error while allocating meal lock");
+	if (pthread_mutex_init(dinner->write_lock, NULL) != 0)
 		finish_dinner(dinner);
-	if (!pthread_mutex_init(dinner->meal_lock, NULL))
+	if (pthread_mutex_init(dinner->meal_lock, NULL) != 0)
 		finish_dinner(dinner);
 	provide_forks(dinner);
 	return ;
@@ -48,23 +54,32 @@ void	mise_en_place(t_dinner *dinner)
 
 void	start_dinner(t_dinner *dinner)
 {
-	int	i;
+	int				i;
+	t_milisecond	start;
 
 	i = 0;
-	dinner->waiter = call_waiter(dinner);
+	start = ft_time_now();
 	while (i < dinner->args.number_of_philos)
 	{
-		if (!pthread_create(&dinner->philos[i].thread_id,
-				NULL, &philo_start_launch, &dinner->philos[i]))
+		dinner->philos[i].born_at = start;
+		dinner->philos[i].last_meal = start;
+		i++;
+	}
+	dinner->waiter = call_waiter(dinner);
+	i = 0;
+	while (i < dinner->args.number_of_philos)
+	{
+		if (pthread_create(&dinner->philos[i].thread_id,
+				NULL, &philo_start_launch, &dinner->philos[i]) != 0)
 			finish_dinner(dinner);
 		i++;
 	}
-	if (!pthread_join(dinner->waiter->thread_id, NULL))
+	if (pthread_join(dinner->waiter->thread_id, NULL) != 0)
 		finish_dinner(dinner);
 	i = 0;
 	while (i < dinner->args.number_of_philos)
 	{
-		if (!pthread_detach(dinner->philos[i].thread_id))
+		if (pthread_detach(dinner->philos[i].thread_id) != 0)
 			finish_dinner(dinner);
 		i++;
 	}
@@ -79,7 +94,6 @@ void	finish_dinner(t_dinner *dinner)
 	while (i < dinner->args.number_of_philos)
 	{
 		pthread_mutex_destroy(&dinner->forks[i]);
-		
 		i++;
 	}
 	free(dinner->philos);
@@ -87,6 +101,7 @@ void	finish_dinner(t_dinner *dinner)
 	free(dinner->waiter);
 	pthread_mutex_destroy(dinner->write_lock);
 	pthread_mutex_destroy(dinner->meal_lock);
-	
+	free(dinner->write_lock);
+	free(dinner->meal_lock);
 	return ;
 }
