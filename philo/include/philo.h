@@ -6,7 +6,7 @@
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 13:33:18 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/14 14:36:04 by fevunge          ###   ########.fr       */
+/*   Updated: 2026/03/15 20:42:47 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,9 @@ typedef struct s_resource
 	pthread_mutex_t	*right_fork;
 	pthread_mutex_t	*write_lock;
 	pthread_mutex_t	*meal_lock;
+	pthread_mutex_t	*dead_lock;
 }	t_resource;
 
-typedef struct s_waiter
-{
-	pthread_t	thread_id;
-}	t_waiter;
 
 typedef struct s_philo
 {
@@ -73,19 +70,25 @@ typedef struct s_philo
 	t_milisecond	sleep;
 	t_milisecond	last_meal;
 	int				must_eat;
-	int				eaten;
+	int				has_eaten;
+	t_bool			is_dead;
+	t_bool			somebody_die;
 	t_milisecond	born_at;
 }	t_philo;
 
 typedef struct s_dinner
 {
 	t_philo			*philos;
-	t_waiter		*waiter;
+	t_philo			*philo_focused;
+	pthread_t		waiter;
 	t_args			args;
+	t_bool			somebody_die;	
 	pthread_mutex_t	*meal_lock;
 	pthread_mutex_t	*write_lock;
+	pthread_mutex_t	*dead_lock;
 	pthread_mutex_t	*forks;
 }	t_dinner;
+
 
 void			*waiter_work(void *arg);
 void			mise_en_place(t_dinner *dinner);
@@ -94,8 +97,10 @@ void			*philo_start_launch(void *arg);
 void			philo_launch(t_philo *philo);
 void			start_dinner(t_dinner *dinner);
 void			finish_dinner(t_dinner *dinner);
+void			call_waiter(t_dinner *dinner);
+t_bool			has_dead_philo(t_dinner *dinner);
 t_bool			philo_starved(t_philo philo);
-t_waiter		*call_waiter(t_dinner *dinner);
+
 
 // IO
 void			get_error(int error, const char *message);
@@ -106,6 +111,7 @@ t_args			get_args(int argc, const char *argv[]);
 
 long			ft_atoi(const char *str);
 void			ft_usleep(t_milisecond mls);
+void			*ft_salloc(size_t size, size_t len);
 t_bool			ft_s_is_digit(const char *message);
 size_t			ft_strlen(const char *str);
 t_milisecond	ft_time_now(void);
