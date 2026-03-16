@@ -51,17 +51,26 @@ void *waiter_work(void *arg)
 			if (philo_starved(philos[i]))
 			{
 				pthread_mutex_unlock(dinner->meal_lock);
+				pthread_mutex_lock(dinner->dead_lock);
 				dinner->somebody_die = TRUE;
-				get_log(&philos[i], DEATH_LOG);
+				pthread_mutex_unlock(dinner->dead_lock);
 				pthread_mutex_lock(dinner->write_lock);
-				
+				printf("%ld %d %s\n",
+					ft_time_now() - philos[i].born_at,
+					philos[i].id, DEATH_LOG);
+				pthread_mutex_unlock(dinner->write_lock);
 				return (NULL);
 			}
 			pthread_mutex_unlock(dinner->meal_lock);
 			i++;
 		}
 		if (all_ate(philos, dinner->args.number_of_philos))
+		{
+			pthread_mutex_lock(dinner->dead_lock);
+			dinner->somebody_die = TRUE;
+			pthread_mutex_unlock(dinner->dead_lock);
 			return (NULL);
+		}
 	}
 	return (NULL);
 }

@@ -32,7 +32,7 @@ static t_bool	is_digit(char c)
 long	ft_atoi(const char *str)
 {
 	long		number;
-	t_signal	sign;
+	int			sign;
 
 	sign = 1;
 	number = 0;
@@ -42,7 +42,8 @@ long	ft_atoi(const char *str)
 		str++;
 	if (is_signal(*str))
 	{
-		sign = *str - 44;
+		if (*str == SIGNAL_MINUS)
+			sign = -1;
 		str++;
 	}
 	while (is_digit(*str))

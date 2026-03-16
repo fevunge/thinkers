@@ -17,6 +17,14 @@ void	get_log(t_philo *philo, const char *log_message)
 	t_milisecond	age;
 
 	pthread_mutex_lock(philo->resources.write_lock);
+	pthread_mutex_lock(philo->resources.dead_lock);
+	if (*philo->somebody_die)
+	{
+		pthread_mutex_unlock(philo->resources.dead_lock);
+		pthread_mutex_unlock(philo->resources.write_lock);
+		return ;
+	}
+	pthread_mutex_unlock(philo->resources.dead_lock);
 	age = ft_time_now() - philo->born_at;
 	printf("%ld %d %s\n", age, philo->id, log_message);
 	pthread_mutex_unlock(philo->resources.write_lock);

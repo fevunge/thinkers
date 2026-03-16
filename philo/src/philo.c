@@ -35,7 +35,7 @@ void call_philos_to_dinner(t_dinner *dinner)
 		dinner->philos[id].resources.write_lock = dinner->write_lock;
 		dinner->philos[id].resources.meal_lock = dinner->meal_lock;
 		dinner->philos[id].resources.dead_lock = dinner->dead_lock;
-		dinner->philos[id].is_dead = FALSE;
+		dinner->philos[id].somebody_die = &dinner->somebody_die;
 		id++;
 	}
 	return;
@@ -43,21 +43,17 @@ void call_philos_to_dinner(t_dinner *dinner)
 
 void *philo_start_launch(void *arg)
 {
-	t_dinner	*dinner;
+	t_philo		*philo;
 
-	dinner = (t_dinner *)arg;
-	if (dinner->philo_focused->id % 2 == 0)
+	philo = (t_philo *)arg;
+	if (philo->id % 2 == 0)
 		ft_usleep(1);
-	pthread_mutex_lock(dinner->meal_lock);
-	dinner->philo_focused->born_at = ft_time_now();
-	dinner->philo_focused->last_meal = ft_time_now();
-	pthread_mutex_unlock(dinner->meal_lock);
-	while (!has_dead_philo(dinner))
+	while (!has_dead_philo(philo))
 	{
-		philo_launch(dinner->philo_focused);
-		get_log(dinner->philo_focused, SLEEP_LOG);
-		ft_usleep(dinner->philo_focused->sleep);
-		get_log(dinner->philo_focused, THINK_LOG);
+		philo_launch(philo);
+		get_log(philo, SLEEP_LOG);
+		ft_usleep(philo->sleep);
+		get_log(philo, THINK_LOG);
 	}
 	return (NULL);
 }
@@ -92,11 +88,11 @@ t_bool philo_starved(t_philo philo)
 	return (time_without_eat > philo.die);
 }
 
-t_bool has_dead_philo(t_dinner *dinner)
+t_bool has_dead_philo(t_philo *philo)
 {
 	t_bool dead;
-	pthread_mutex_lock(dinner->dead_lock);
-	dead = dinner->somebody_die;
-	pthread_mutex_unlock(dinner->dead_lock);
+	pthread_mutex_lock(philo->resources.dead_lock);
+	dead = *philo->somebody_die;
+	pthread_mutex_unlock(philo->resources.dead_lock);
 	return (dead);
 }

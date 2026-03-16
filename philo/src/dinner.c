@@ -54,13 +54,18 @@ void	start_dinner(t_dinner *dinner)
 	i = 0;
 	start = ft_time_now();
 	dinner->somebody_die = FALSE;
+	while (i < dinner->args.number_of_philos)
+	{
+		dinner->philos[i].born_at = start;
+		dinner->philos[i].last_meal = start;
+		i++;
+	}
 	call_waiter(dinner);
 	i = 0;
 	while (i < dinner->args.number_of_philos)
 	{
-		dinner->philo_focused = &dinner->philos[i];
 		if (pthread_create(&dinner->philos[i].thread_id,
-				NULL, &philo_start_launch, dinner) != 0)
+				NULL, &philo_start_launch, &dinner->philos[i]) != 0)
 			finish_dinner(dinner);
 		i++;
 	}
