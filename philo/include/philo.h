@@ -71,15 +71,13 @@ typedef struct s_philo
 	t_milisecond	last_meal;
 	int				must_eat;
 	int				has_eaten;
-	t_bool			is_dead;
-	t_bool			somebody_die;
+	t_bool			*somebody_die;
 	t_milisecond	born_at;
 }	t_philo;
 
 typedef struct s_dinner
 {
 	t_philo			*philos;
-	t_philo			*philo_focused;
 	pthread_t		waiter;
 	t_args			args;
 	t_bool			somebody_die;	
@@ -98,7 +96,7 @@ void			philo_launch(t_philo *philo);
 void			start_dinner(t_dinner *dinner);
 void			finish_dinner(t_dinner *dinner);
 void			call_waiter(t_dinner *dinner);
-t_bool			has_dead_philo(t_dinner *dinner);
+t_bool			has_dead_philo(t_philo *philo);
 t_bool			philo_starved(t_philo philo);
 
 
