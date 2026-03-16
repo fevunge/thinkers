@@ -6,15 +6,15 @@
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 18:29:48 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/14 14:34:06 by fevunge          ###   ########.fr       */
+/*   Updated: 2026/03/15 20:52:43 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	call_philos_to_dinner(t_dinner *dinner)
+void call_philos_to_dinner(t_dinner *dinner)
 {
-	int	id;
+	int id;
 
 	if (!dinner->philos)
 		get_error(MEMORY_ERROR, "Philos not allocated");
@@ -26,7 +26,7 @@ void	call_philos_to_dinner(t_dinner *dinner)
 		dinner->philos[id].eat = dinner->args.time_to_eat;
 		dinner->philos[id].sleep = dinner->args.time_to_sleep;
 		dinner->philos[id].must_eat = dinner->args.times_must_eat;
-		dinner->philos[id].eaten = 0;
+		dinner->philos[id].has_eaten = 0;
 		dinner->philos[id].resources.left_fork = dinner->forks + id;
 		if (id == 0)
 			dinner->philos[id].resources.right_fork = dinner->forks + dinner->args.number_of_philos - 1;
@@ -34,24 +34,35 @@ void	call_philos_to_dinner(t_dinner *dinner)
 			dinner->philos[id].resources.right_fork = dinner->forks + id - 1;
 		dinner->philos[id].resources.write_lock = dinner->write_lock;
 		dinner->philos[id].resources.meal_lock = dinner->meal_lock;
+		dinner->philos[id].resources.dead_lock = dinner->dead_lock;
+		dinner->philos[id].is_dead = FALSE;
 		id++;
 	}
-	return ;
+	return;
 }
 
-void	*philo_start_launch(void *arg)
+void *philo_start_launch(void *arg)
 {
-	t_philo	*philo;
+	t_dinner	*dinner;
 
-	philo = (t_philo *)arg;
-	if (philo->id % 2 == 0)
+	dinner = (t_dinner *)arg;
+	if (dinner->philo_focused->id % 2 == 0)
 		ft_usleep(1);
-	while (TRUE)
-		philo_launch(philo);
+	pthread_mutex_lock(dinner->meal_lock);
+	dinner->philo_focused->born_at = ft_time_now();
+	dinner->philo_focused->last_meal = ft_time_now();
+	pthread_mutex_unlock(dinner->meal_lock);
+	while (!has_dead_philo(dinner))
+	{
+		philo_launch(dinner->philo_focused);
+		get_log(dinner->philo_focused, SLEEP_LOG);
+		ft_usleep(dinner->philo_focused->sleep);
+		get_log(dinner->philo_focused, THINK_LOG);
+	}
 	return (NULL);
 }
 
-void	philo_launch(t_philo *philo)
+void philo_launch(t_philo *philo)
 {
 	pthread_mutex_lock(philo->resources.left_fork);
 	get_log(philo, TAKE_FORK_LOG);
@@ -59,28 +70,33 @@ void	philo_launch(t_philo *philo)
 	{
 		ft_usleep(philo->die * 2);
 		pthread_mutex_unlock(philo->resources.left_fork);
-		return ;
+		return;
 	}
 	pthread_mutex_lock(philo->resources.right_fork);
 	get_log(philo, TAKE_FORK_LOG);
 	pthread_mutex_lock(philo->resources.meal_lock);
 	get_log(philo, EAT_LOG);
-	philo->eaten++;
+	philo->has_eaten++;
 	philo->last_meal = ft_time_now();
 	pthread_mutex_unlock(philo->resources.meal_lock);
 	ft_usleep(philo->eat);
 	pthread_mutex_unlock(philo->resources.left_fork);
 	pthread_mutex_unlock(philo->resources.right_fork);
-	get_log(philo, SLEEP_LOG);
-	ft_usleep(philo->sleep);
-	get_log(philo, THINK_LOG);
 }
 
-
-t_bool	philo_starved(t_philo philo)
+t_bool philo_starved(t_philo philo)
 {
-	t_milisecond	time_without_eat;
+	t_milisecond time_without_eat;
 
 	time_without_eat = ft_time_now() - philo.last_meal;
 	return (time_without_eat > philo.die);
+}
+
+t_bool has_dead_philo(t_dinner *dinner)
+{
+	t_bool dead;
+	pthread_mutex_lock(dinner->dead_lock);
+	dead = dinner->somebody_die;
+	pthread_mutex_unlock(dinner->dead_lock);
+	return (dead);
 }
