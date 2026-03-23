@@ -6,7 +6,7 @@
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 16:10:02 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/15 20:50:48 by fevunge          ###   ########.fr       */
+/*   Updated: 2026/03/16 08:41:27 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static void	provide_forks(t_dinner *dinner)
 	int	i;
 
 	i = 0;
-	while (i < dinner->args.number_of_philos)
+	while (i < dinner->args.philos_n)
 	{
 		if (pthread_mutex_init(&dinner->forks[i], NULL) != 0)
 			finish_dinner(dinner);
@@ -25,22 +25,36 @@ static void	provide_forks(t_dinner *dinner)
 	}
 }
 
+static void	start_philos(t_dinner *dinner)
+{
+	int				i;
+	t_milisecond	start;
+
+	i = 0;
+	start = ft_time_now();
+	while (i < dinner->args.philos_n)
+	{
+		dinner->philos[i].born_at = start;
+		dinner->philos[i].last_meal = start;
+		i++;
+	}
+}
+
 void	mise_en_place(t_dinner *dinner)
 {
-	size_t	fork_quantity;
-	
-	fork_quantity = dinner->args.number_of_philos;
-	dinner->forks = ft_salloc(sizeof(pthread_mutex_t), fork_quantity);
-	dinner->philos = ft_salloc(sizeof(t_philo), fork_quantity);
-	
+	dinner->forks = ft_salloc(sizeof(pthread_mutex_t), dinner->args.philos_n);
+	dinner->philos = ft_salloc(sizeof(t_philo), dinner->args.philos_n);
 	dinner->write_lock = ft_salloc(sizeof(pthread_mutex_t), 1);
 	dinner->meal_lock = ft_salloc(sizeof(pthread_mutex_t), 1);
-	dinner->dead_lock = ft_salloc(sizeof(pthread_mutex_t), 1);
+	dinner->death_lock = ft_salloc(sizeof(pthread_mutex_t), 1);
+	dinner->start_lock = ft_salloc(sizeof(pthread_mutex_t), 1);
 	if (pthread_mutex_init(dinner->write_lock, NULL) != 0)
 		finish_dinner(dinner);
 	if (pthread_mutex_init(dinner->meal_lock, NULL) != 0)
 		finish_dinner(dinner);
-	if (pthread_mutex_init(dinner->dead_lock, NULL) != 0)
+	if (pthread_mutex_init(dinner->death_lock, NULL) != 0)
+		finish_dinner(dinner);
+	if (pthread_mutex_init(dinner->start_lock, NULL) != 0)
 		finish_dinner(dinner);
 	provide_forks(dinner);
 	return ;
@@ -48,29 +62,25 @@ void	mise_en_place(t_dinner *dinner)
 
 void	start_dinner(t_dinner *dinner)
 {
-	int				i;
-	t_milisecond	start;
+	int	i;
 
 	i = 0;
-	start = ft_time_now();
 	dinner->somebody_die = FALSE;
-	while (i < dinner->args.number_of_philos)
-	{
-		dinner->philos[i].born_at = start;
-		dinner->philos[i].last_meal = start;
-		i++;
-	}
-	call_waiter(dinner);
-	i = 0;
-	while (i < dinner->args.number_of_philos)
+	dinner->start_simulation = FALSE;
+	start_philos(dinner);
+	while (i < dinner->args.philos_n)
 	{
 		if (pthread_create(&dinner->philos[i].thread_id,
 				NULL, &philo_start_launch, &dinner->philos[i]) != 0)
 			finish_dinner(dinner);
 		i++;
 	}
+	call_waiter(dinner);
+	pthread_mutex_lock(dinner->start_lock);
+	dinner->start_simulation = TRUE;
+	pthread_mutex_unlock(dinner->start_lock);
 	i = 0;
-	while (i < dinner->args.number_of_philos)
+	while (i < dinner->args.philos_n)
 	{
 		if (pthread_join(dinner->philos[i].thread_id, NULL) != 0)
 			finish_dinner(dinner);
@@ -86,7 +96,7 @@ void	finish_dinner(t_dinner *dinner)
 	int	i;
 
 	i = 0;
-	while (i < dinner->args.number_of_philos)
+	while (i < dinner->args.philos_n)
 	{
 		pthread_mutex_destroy(&dinner->forks[i]);
 		i++;
@@ -95,9 +105,11 @@ void	finish_dinner(t_dinner *dinner)
 	free(dinner->philos);
 	pthread_mutex_destroy(dinner->write_lock);
 	pthread_mutex_destroy(dinner->meal_lock);
-	pthread_mutex_destroy(dinner->dead_lock);
+	pthread_mutex_destroy(dinner->death_lock);
+	pthread_mutex_destroy(dinner->start_lock);
 	free(dinner->write_lock);
 	free(dinner->meal_lock);
-	free(dinner->dead_lock);
+	free(dinner->death_lock);
+	free(dinner->start_lock);
 	return ;
 }

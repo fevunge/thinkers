@@ -6,16 +6,26 @@
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 19:44:10 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/15 20:57:34 by fevunge          ###   ########.fr       */
+/*   Updated: 2026/03/16 08:44:34 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-t_bool all_ate(t_philo *philos, int count)
+static t_bool	has_started_simulation(t_dinner *dinner)
 {
-	int i;
-	t_bool all_ate;
+	t_bool	started;
+
+	pthread_mutex_lock(dinner->start_lock);
+	started = dinner->start_simulation;
+	pthread_mutex_unlock(dinner->start_lock);
+	return (started);
+}
+
+t_bool	all_ate(t_philo *philos, int count)
+{
+	int		i;
+	t_bool	all_ate;
 
 	if (philos->must_eat == -1)
 		return (FALSE);
@@ -23,10 +33,10 @@ t_bool all_ate(t_philo *philos, int count)
 	all_ate = TRUE;
 	while (i < count)
 	{
-		pthread_mutex_lock(philos->resources.meal_lock);
+		pthread_mutex_lock(philos->meal_lock);
 		if (philos[i].has_eaten < philos[i].must_eat)
 			all_ate = FALSE;
-		pthread_mutex_unlock(philos->resources.meal_lock);
+		pthread_mutex_unlock(philos->meal_lock);
 		i++;
 	}
 	if (all_ate)
@@ -34,43 +44,51 @@ t_bool all_ate(t_philo *philos, int count)
 	return (FALSE);
 }
 
-void *waiter_work(void *arg)
+static void	announce_death(t_dinner *dinner, t_philo philo)
 {
-	t_dinner *dinner;
-	t_philo *philos;
-	int i;
+	pthread_mutex_lock(dinner->death_lock);
+	dinner->somebody_die = TRUE;
+	pthread_mutex_unlock(dinner->death_lock);
+	pthread_mutex_lock(dinner->write_lock);
+	printf("%ld %d %s\n",
+		ft_time_now() - philo.born_at,
+		philo.id, DEATH_LOG);
+	pthread_mutex_unlock(dinner->write_lock);
+}
+
+static void	announce_all_ate(t_dinner *dinner)
+{
+	pthread_mutex_lock(dinner->death_lock);
+	dinner->somebody_die = TRUE;
+	pthread_mutex_unlock(dinner->death_lock);
+}
+
+void	*waiter_work(void *arg)
+{
+	t_dinner	*dinner;
+	t_philo		*philos;
+	int			i;
 
 	dinner = (t_dinner *)arg;
 	philos = dinner->philos;
+	while (!has_started_simulation(dinner))
+		usleep(500);
 	while (TRUE)
 	{
 		i = 0;
-		while (i < dinner->args.number_of_philos)
+		while (i < dinner->args.philos_n)
 		{
 			pthread_mutex_lock(dinner->meal_lock);
-			if (philo_starved(philos[i]))
+			if (philo_starved(&philos[i]))
 			{
 				pthread_mutex_unlock(dinner->meal_lock);
-				pthread_mutex_lock(dinner->dead_lock);
-				dinner->somebody_die = TRUE;
-				pthread_mutex_unlock(dinner->dead_lock);
-				pthread_mutex_lock(dinner->write_lock);
-				printf("%ld %d %s\n",
-					ft_time_now() - philos[i].born_at,
-					philos[i].id, DEATH_LOG);
-				pthread_mutex_unlock(dinner->write_lock);
-				return (NULL);
+				return (announce_death(dinner, philos[i]), NULL);
 			}
 			pthread_mutex_unlock(dinner->meal_lock);
 			i++;
 		}
-		if (all_ate(philos, dinner->args.number_of_philos))
-		{
-			pthread_mutex_lock(dinner->dead_lock);
-			dinner->somebody_die = TRUE;
-			pthread_mutex_unlock(dinner->dead_lock);
-			return (NULL);
-		}
+		if (all_ate(philos, dinner->args.philos_n))
+			return (announce_all_ate(dinner), NULL);
 	}
 	return (NULL);
 }

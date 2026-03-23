@@ -6,7 +6,7 @@
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 13:33:18 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/15 20:42:47 by fevunge          ###   ########.fr       */
+/*   Updated: 2026/03/16 08:52:26 by fevunge          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,33 +38,26 @@
 
 typedef unsigned int	t_bool;
 typedef unsigned int	t_natural;
-typedef unsigned char	t_signal;
 typedef unsigned long	t_milisecond;
 
 typedef struct s_args
 {
-	int	number_of_philos;
+	int	philos_n;
 	int	time_to_die;
 	int	time_to_eat;
 	int	time_to_sleep;
 	int	times_must_eat;
 }	t_args;
 
-typedef struct s_resource
-{
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
-	pthread_mutex_t	*write_lock;
-	pthread_mutex_t	*meal_lock;
-	pthread_mutex_t	*dead_lock;
-}	t_resource;
-
-
 typedef struct s_philo
 {
 	t_natural		id;
 	pthread_t		thread_id;
-	t_resource		resources;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*write_lock;
+	pthread_mutex_t	*meal_lock;
+	pthread_mutex_t	*death_lock;
 	t_milisecond	die;
 	t_milisecond	eat;
 	t_milisecond	sleep;
@@ -72,6 +65,8 @@ typedef struct s_philo
 	int				must_eat;
 	int				has_eaten;
 	t_bool			*somebody_die;
+	t_bool			*start_simulation;
+	pthread_mutex_t	*start_lock;
 	t_milisecond	born_at;
 }	t_philo;
 
@@ -80,13 +75,14 @@ typedef struct s_dinner
 	t_philo			*philos;
 	pthread_t		waiter;
 	t_args			args;
-	t_bool			somebody_die;	
+	t_bool			somebody_die;
+	t_bool			start_simulation;
 	pthread_mutex_t	*meal_lock;
 	pthread_mutex_t	*write_lock;
-	pthread_mutex_t	*dead_lock;
+	pthread_mutex_t	*death_lock;
+	pthread_mutex_t	*start_lock;
 	pthread_mutex_t	*forks;
 }	t_dinner;
-
 
 void			*waiter_work(void *arg);
 void			mise_en_place(t_dinner *dinner);
@@ -97,8 +93,7 @@ void			start_dinner(t_dinner *dinner);
 void			finish_dinner(t_dinner *dinner);
 void			call_waiter(t_dinner *dinner);
 t_bool			has_dead_philo(t_philo *philo);
-t_bool			philo_starved(t_philo philo);
-
+t_bool			philo_starved(t_philo *philo);
 
 // IO
 void			get_error(int error, const char *message);
@@ -106,7 +101,6 @@ void			get_log(t_philo *philo, const char *log_message);
 t_args			get_args(int argc, const char *argv[]);
 
 // utils
-
 long			ft_atoi(const char *str);
 void			ft_usleep(t_milisecond mls);
 void			*ft_salloc(size_t size, size_t len);
