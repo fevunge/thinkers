@@ -1,2 +1,12 @@
 void/
 .github/
+.vscode/
+.idea/
+*.log
+*.tmp
+*.bak
+*.o
+*/*.o
+*/*/*.o
+*/*/*/*.o
+
