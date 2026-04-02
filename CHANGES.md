@@ -1,13 +1,13 @@
 # Changes Made to Apply Void's Monitoring Logic
 
 ## Summary
-Refactored the `philo` project to use the `void` project's simpler observer/waiter pattern for thread monitoring while maintaining philo's codebase structure, naming conventions, and memory allocation strategy.
+Refactored the `thinker` project to use the `void` project's simpler observer/waiter pattern for thread monitoring while maintaining thinker's codebase structure, naming conventions, and memory allocation strategy.
 
 ## Key Changes
 
-### 1. **Header File Updates** (`include/philo.h`)
+### 1. **Header File Updates** (`include/thinker.h`)
 - Removed `stop` field from `s_dinner` struct (no longer needed)
-- Removed `dinner` pointer from `s_philo` struct (observer handles termination, not the philosopher)
+- Removed `dinner` pointer from `s_thinker` struct (observer handles termination, not the philosopher)
 
 **Rationale:** The observer pattern doesn't require philosophers to check a stop flag. The waiter thread monitors and returns, naturally terminating the system.
 
@@ -28,7 +28,7 @@ dinner->stop = TRUE;
 return (NULL);
 ```
 
-### 3. **Philosopher Thread Logic** (`src/philo.c`)
+### 3. **Philosopher Thread Logic** (`src/thinker.c`)
 - Removed `is_simulation_running()` function entirely
 - Changed `philo_start_launch()` to infinite loop: `while (TRUE)`
 - Removed `is_simulation_running()` checks in `philo_launch()`
@@ -36,14 +36,14 @@ return (NULL);
 
 **Before:**
 ```c
-while (is_simulation_running(philo))  // Checks flag every iteration
-    philo_launch(philo);
+while (is_simulation_running(thinker))  // Checks flag every iteration
+    philo_launch(thinker);
 ```
 
 **After:**
 ```c
 while (TRUE)  // Simple, infinite loop
-    philo_launch(philo);
+    philo_launch(thinker);
 ```
 
 ### 4. **Thread Lifecycle** (`src/dinner.c`)
@@ -116,7 +116,7 @@ All functionality preserved:
 
 ## Compatibility
 
-- **Still maintains philo's aesthetic:** Variable names, file structure, code style
+- **Still maintains thinker's aesthetic:** Variable names, file structure, code style
 - **Still uses malloc:** Dynamic allocation for flexibility
 - **Still uses same build system:** Makefile unchanged
 - **Still has same command-line interface:** Arguments unchanged
@@ -138,9 +138,9 @@ All functionality preserved:
 
 ## Files Modified
 
-1. `include/philo.h` - Structure definitions
+1. `include/thinker.h` - Structure definitions
 2. `src/waiter.c` - Waiter logic
-3. `src/philo.c` - Philosopher logic
+3. `src/thinker.c` - Philosopher logic
 4. `src/dinner.c` - Initialization and thread management
 
 ## Documentation Added
