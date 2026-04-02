@@ -74,7 +74,7 @@ void *waiter_work(void *arg) {
 
 ```c
 // The philosopher's identity
-typedef struct s_philo {
+typedef struct s_thinker {
     int id;                    // Philosopher number
     pthread_t thread_id;       // Thread handle
     
@@ -94,47 +94,47 @@ typedef struct s_philo {
     // Meal tracking
     int must_eat;              // Required meals (-1 = unlimited)
     int eaten;                 // Meals completed
-} t_philo;
+} t_thinker;
 ```
 
 ### The Philosopher's Life Cycle
 
 ```c
 void *philo_start_launch(void *arg) {
-    t_philo *philo = (t_philo *)arg;
+    t_thinker *thinker = (t_thinker *)arg;
     
     // Stagger start times to reduce contention
-    if (philo->id % 2 == 0)
+    if (thinker->id % 2 == 0)
         ft_usleep(1);
     
     // Infinite loop - only stops when program exits
     while (TRUE)
-        philo_launch(philo);
+        philo_launch(thinker);
 }
 
-void philo_launch(t_philo *philo) {
+void philo_launch(t_thinker *thinker) {
     // Try to acquire left fork
-    pthread_mutex_lock(philo->left_fork);
-    printf("Philosopher %d took left fork\n", philo->id);
+    pthread_mutex_lock(thinker->left_fork);
+    printf("Philosopher %d took left fork\n", thinker->id);
     
     // Try to acquire right fork
-    pthread_mutex_lock(philo->right_fork);
-    printf("Philosopher %d took right fork\n", philo->id);
+    pthread_mutex_lock(thinker->right_fork);
+    printf("Philosopher %d took right fork\n", thinker->id);
     
     // Eat!
-    pthread_mutex_lock(philo->meal_lock);
-    philo->last_meal = current_time();  // Update so waiter knows I'm alive
-    philo->eaten++;                     // Count this meal
-    pthread_mutex_unlock(philo->meal_lock);
+    pthread_mutex_lock(thinker->meal_lock);
+    thinker->last_meal = current_time();  // Update so waiter knows I'm alive
+    thinker->eaten++;                     // Count this meal
+    pthread_mutex_unlock(thinker->meal_lock);
     
-    ft_usleep(philo->eat);              // Eat for N milliseconds
+    ft_usleep(thinker->eat);              // Eat for N milliseconds
     
     // Release forks
-    pthread_mutex_unlock(philo->left_fork);
-    pthread_mutex_unlock(philo->right_fork);
+    pthread_mutex_unlock(thinker->left_fork);
+    pthread_mutex_unlock(thinker->right_fork);
     
     // Sleep
-    ft_usleep(philo->sleep);
+    ft_usleep(thinker->sleep);
     
     // Think
 }
@@ -248,7 +248,7 @@ This creates a "busy-wait" loop that sleeps for almost exactly N milliseconds, r
 ```c
 // ❌ BAD: Locks fork but never unlocks it
 pthread_mutex_lock(&fork);
-philo->eaten++;
+thinker->eaten++;
 // No unlock! Other threads wait forever.
 ```
 
@@ -282,22 +282,22 @@ Before declaring victory, test:
 
 1. **Normal scenario**: Philosophers eat and eventually finish
    ```bash
-   ./philo 4 800 200 200 5  # Should complete without dying
+   ./thinker 4 800 200 200 5  # Should complete without dying
    ```
 
 2. **Death scenario**: Watch a philosopher starve
    ```bash
-   ./philo 2 800 200 200    # One should die (or both, depending on timing)
+   ./thinker 2 800 200 200    # One should die (or both, depending on timing)
    ```
 
 3. **Single philosopher**: Must die (can't hold 2 forks from 1)
    ```bash
-   ./philo 1 500 200 100    # Will die at 500ms
+   ./thinker 1 500 200 100    # Will die at 500ms
    ```
 
 4. **Resource exhaustion**: Invalid arguments
    ```bash
-   ./philo abc 100 100 100  # Should error gracefully
+   ./thinker abc 100 100 100  # Should error gracefully
    ```
 
 ## Where To Study More
