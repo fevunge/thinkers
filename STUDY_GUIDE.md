@@ -450,7 +450,7 @@ Simple, elegant, and works!
 
 ## Code Walkthrough
 
-### File: `include/philo.h`
+### File: `include/thinker.h`
 
 **Structures:**
 ```c
@@ -463,7 +463,7 @@ typedef struct s_resource {
 } t_resource;
 
 // Philosopher definition
-typedef struct s_philo {
+typedef struct s_thinker {
     int id;                           // Philosopher number
     pthread_t thread_id;              // Thread identifier
     t_resource resources;             // Forks and locks
@@ -471,11 +471,11 @@ typedef struct s_philo {
     unsigned long last_meal;          // Time of last meal
     int must_eat;                     // Required meals (-1 = unlimited)
     int eaten;                        // Meals completed so far
-} t_philo;
+} t_thinker;
 
 // Dinner system
 typedef struct s_dinner {
-    t_philo *philos;                  // Array of philosophers
+    t_thinker *philos;                  // Array of philosophers
     pthread_mutex_t *forks;           // Array of fork mutexes
     pthread_mutex_t *write_lock;      // Console output protection
     pthread_mutex_t *meal_lock;       // Meal counter protection
@@ -494,7 +494,7 @@ void mise_en_place(t_dinner *dinner) {
     dinner->forks = malloc(sizeof(pthread_mutex_t) * num_philosophers);
     
     // Allocate philosopher structs
-    dinner->philos = malloc(sizeof(t_philo) * num_philosophers);
+    dinner->philos = malloc(sizeof(t_thinker) * num_philosophers);
     
     // Allocate global mutexes
     dinner->write_lock = malloc(sizeof(pthread_mutex_t));
@@ -514,17 +514,17 @@ void mise_en_place(t_dinner *dinner) {
 - Standard practice: Avoid stack overflow with large allocations
 - Follows convention seen in professional code
 
-### File: `src/philo.c` - Philosopher Logic
+### File: `src/thinker.c` - Philosopher Logic
 
 **Initialization:**
 ```c
 void call_philos_to_dinner(t_dinner *dinner) {
     for (int i = 0; i < num_philosophers; i++) {
-        philo = &dinner->philos[i];
-        philo->id = i + 1;                    // 1-indexed
-        philo->resources.left_fork = forks[i];
+        thinker = &dinner->philos[i];
+        thinker->id = i + 1;                    // 1-indexed
+        thinker->resources.left_fork = forks[i];
         // Right fork is PREVIOUS fork (circular table)
-        philo->resources.right_fork = (i == 0) 
+        thinker->resources.right_fork = (i == 0) 
             ? forks[num_philosophers - 1] 
             : forks[i - 1];
         // ... set other fields ...
@@ -544,15 +544,15 @@ Philosopher 4: left=fork[4], right=fork[3]
 **Thread launch:**
 ```c
 void *philo_start_launch(void *arg) {
-    t_philo *philo = (t_philo *)arg;
+    t_thinker *thinker = (t_thinker *)arg;
     
     // Stagger start times - alternate philosophers start slightly late
-    if (philo->id % 2 == 0)
+    if (thinker->id % 2 == 0)
         ft_usleep(1);  // Even philosophers sleep 1ms
     
     // Infinite loop - only exits when program terminates
     while (TRUE)
-        philo_launch(philo);
+        philo_launch(thinker);
     
     return NULL;
 }
@@ -565,27 +565,27 @@ void *philo_start_launch(void *arg) {
 
 **The eating sequence:**
 ```c
-void philo_launch(t_philo *philo) {
+void philo_launch(t_thinker *thinker) {
     // Acquire left fork
-    pthread_mutex_lock(philo->left_fork);
+    pthread_mutex_lock(thinker->left_fork);
     // Can't acquire right fork until after this unlocks
     
     // Acquire right fork
-    pthread_mutex_lock(philo->right_fork);
+    pthread_mutex_lock(thinker->right_fork);
     // Now have both forks
     
     // Protect meal data
-    pthread_mutex_lock(philo->meal_lock);
-    philo->last_meal = current_time();  // Update "I'm alive" timestamp
-    philo->eaten++;                     // Count meals
-    pthread_mutex_unlock(philo->meal_lock);
+    pthread_mutex_lock(thinker->meal_lock);
+    thinker->last_meal = current_time();  // Update "I'm alive" timestamp
+    thinker->eaten++;                     // Count meals
+    pthread_mutex_unlock(thinker->meal_lock);
     
     // Release forks (in reverse order of acquisition - good practice)
-    pthread_mutex_unlock(philo->right_fork);
-    pthread_mutex_unlock(philo->left_fork);
+    pthread_mutex_unlock(thinker->right_fork);
+    pthread_mutex_unlock(thinker->left_fork);
     
     // Sleep (can be interrupted, philosopher still marked as alive)
-    ft_usleep(philo->sleep);
+    ft_usleep(thinker->sleep);
 }
 ```
 
@@ -687,34 +687,34 @@ void finish_dinner(t_dinner *dinner) {
 
 **1. Normal operation - all eat successfully**
 ```bash
-./philo 4 800 200 200 2
+./thinker 4 800 200 200 2
 # All 4 philosophers should eat 2 times each and program exits
 ```
 
 **2. Starvation detection**
 ```bash
-./philo 4 400 200 200
+./thinker 4 400 200 200
 # With these times, someone will starve - philosopher dies
 # Should see "X died" message
 ```
 
 **3. Single philosopher (edge case)**
 ```bash
-./philo 1 500 200 100
+./thinker 1 500 200 100
 # With 1 philosopher and 1 fork, they can't eat
 # Should die at ~500ms
 ```
 
 **4. Two philosophers (simplest case)**
 ```bash
-./philo 2 500 200 200
+./thinker 2 500 200 200
 # Simplest deadlock scenario
 # Should work if they don't both grab same fork first
 ```
 
 **5. Many philosophers (stress test)**
 ```bash
-./philo 50 1000 200 200 1
+./thinker 50 1000 200 200 1
 # Stress test the system
 # Should complete without deadlock or crashes
 ```
@@ -724,13 +724,13 @@ void finish_dinner(t_dinner *dinner) {
 **1. Add debug output**
 ```c
 #ifdef DEBUG
-printf("[DEBUG] Philosopher %d acquired left fork\n", philo->id);
+printf("[DEBUG] Philosopher %d acquired left fork\n", thinker->id);
 #endif
 ```
 
 **2. Use timestamps to detect races**
 ```c
-printf("%ld %d action\n", ft_time_now() - start_time, philo->id);
+printf("%ld %d action\n", ft_time_now() - start_time, thinker->id);
 ```
 
 **3. Check for mutex errors**
@@ -743,13 +743,13 @@ if (ret != 0)
 **4. Use thread-safe assertions**
 ```c
 // In philosopher
-assert(philo->eaten >= 0);
-assert(philo->id >= 1 && philo->id <= count);
+assert(thinker->eaten >= 0);
+assert(thinker->id >= 1 && thinker->id <= count);
 ```
 
 **5. Monitor resource usage**
 ```bash
-watch -n 1 'ps aux | grep philo'
+watch -n 1 'ps aux | grep thinker'
 # Watch for zombie processes or hung threads
 ```
 
