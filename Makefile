@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 CC=cc
-NAME=philo
+NAME=thinker
 SOURCE_DIR=src
 UTIL_DIR=$(SOURCE_DIR)/util
 STRING_UTIL_DIR=$(UTIL_DIR)/string
@@ -21,12 +21,12 @@ IO_DIR=$(SOURCE_DIR)/io
 
 CFLAGS=-Wall -Werror -Wextra -Iinclude/
 
-INC=$(INCLUDE_DIR)/philo.h
+INC=$(INCLUDE_DIR)/thinker.h
 
 SRC=$(SOURCE_DIR)/main.c \
 	$(SOURCE_DIR)/dinner.c \
 	$(SOURCE_DIR)/waiter.c \
-	$(SOURCE_DIR)/philo.c \
+	$(SOURCE_DIR)/thinker.c \
 	$(STRING_UTIL_DIR)/ft_atoi.c \
 	$(STRING_UTIL_DIR)/ft_strlen.c \
 	$(STRING_UTIL_DIR)/ft_s_is_digit.c \
