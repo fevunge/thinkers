@@ -16,14 +16,14 @@ The challenge is to:
 ## Project Structure
 
 ```
-philo/
+thinker/
 ├── include/
-│   └── philo.h              # Main header with structs and function declarations
+│   └── thinker.h              # Main header with structs and function declarations
 ├── src/
 │   ├── main.c               # Entry point, argument parsing
 │   ├── dinner.c             # Initialization and lifecycle management
 │   ├── waiter.c             # Observer thread (monitors philosopher states)
-│   ├── philo.c              # Philosopher logic and thread routines
+│   ├── thinker.c              # Philosopher logic and thread routines
 │   ├── io/
 │   │   ├── get_args.c       # Parse command-line arguments
 │   │   ├── get_error.c      # Error handling
@@ -37,7 +37,7 @@ philo/
 │           ├── ft_time_now.c    # Get current time in milliseconds
 │           └── ft_usleep.c      # Sleep with busy-wait for accuracy
 ├── Makefile                 # Build configuration
-└── philo               # Compiled executable
+└── thinker               # Compiled executable
 ```
 
 ## How to Use
@@ -52,7 +52,7 @@ make re           # Rebuild from scratch
 
 ### Running the Program
 ```bash
-./philo <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep> [times_each_must_eat]
+./thinker <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep> [times_each_must_eat]
 ```
 
 **Arguments:**
@@ -64,9 +64,9 @@ make re           # Rebuild from scratch
 
 **Examples:**
 ```bash
-./philo 4 800 200 200        # 4 philosophers, normal scenario
-./philo 2 800 200 200 3      # 2 philosophers, each must eat 3 times
-./philo 1 500 200 100        # 1 philosopher (will die)
+./thinker 4 800 200 200        # 4 philosophers, normal scenario
+./thinker 2 800 200 200 3      # 2 philosophers, each must eat 3 times
+./thinker 1 500 200 100        # 1 philosopher (will die)
 ```
 
 ## Output Format
