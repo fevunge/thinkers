@@ -67,7 +67,7 @@ Here are the key things you need to know to succeed in this assignment:
 Running:
 
 ```bash
-valgrind --tool=helgrind ./philo 4 410 200 200
+valgrind --tool=helgrind ./thinker 4 410 200 200
 ```
 
 Output:
@@ -124,7 +124,7 @@ start = get_time();
 i = 0;
 while (i < data->n_philo)
 {
-    philo[i].last_meal = start;
+    thinker[i].last_meal = start;
     i++;
 }
 ```
@@ -210,7 +210,7 @@ while (get_time() - start < time_to_sleep)
 Always compare:
 
 ```c
-get_time() - philo->last_meal
+get_time() - thinker->last_meal
 ```
 
 Never mix:
@@ -248,7 +248,7 @@ This development environment **does not have Valgrind installed**.
  All validation with:
 
 ```bash
-valgrind --tool=helgrind ./philo ...
+valgrind --tool=helgrind ./thinker ...
 ```
 
 will be performed manually on a separate testing machine.
@@ -285,7 +285,7 @@ Make your program:
  Test (external machine only)
 
 ```bash
-valgrind --tool=helgrind ./philo 4 410 200 200
+valgrind --tool=helgrind ./thinker 4 410 200 200
 ```
 
 ✔ Expected: no deaths
