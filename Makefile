@@ -26,7 +26,7 @@ INC=$(INCLUDE_DIR)/thinker.h
 SRC=$(SOURCE_DIR)/main.c \
 	$(SOURCE_DIR)/dinner.c \
 	$(SOURCE_DIR)/waiter.c \
-	$(SOURCE_DIR)/thinker.c \
+	$(SOURCE_DIR)/main.c \
 	$(STRING_UTIL_DIR)/ft_atoi.c \
 	$(STRING_UTIL_DIR)/ft_strlen.c \
 	$(STRING_UTIL_DIR)/ft_s_is_digit.c \
