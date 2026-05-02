@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "thinker.h"
 
 static t_bool	has_started_simulation(t_dinner *dinner)
 {
@@ -22,7 +22,7 @@ static t_bool	has_started_simulation(t_dinner *dinner)
 	return (started);
 }
 
-t_bool	all_ate(t_philo *philos, int count)
+t_bool	all_ate(t_thinker *philos, int count)
 {
 	int		i;
 	t_bool	all_ate;
@@ -44,15 +44,15 @@ t_bool	all_ate(t_philo *philos, int count)
 	return (FALSE);
 }
 
-static void	announce_death(t_dinner *dinner, t_philo philo)
+static void	announce_death(t_dinner *dinner, t_thinker thinker)
 {
 	pthread_mutex_lock(dinner->death_lock);
 	dinner->somebody_die = TRUE;
 	pthread_mutex_unlock(dinner->death_lock);
 	pthread_mutex_lock(dinner->write_lock);
 	printf("%ld %d %s\n",
-		ft_time_now() - philo.born_at,
-		philo.id, DEATH_LOG);
+		ft_time_now() - thinker.born_at,
+		thinker.id, DEATH_LOG);
 	pthread_mutex_unlock(dinner->write_lock);
 }
 
@@ -66,7 +66,7 @@ static void	announce_all_ate(t_dinner *dinner)
 void	*waiter_work(void *arg)
 {
 	t_dinner	*dinner;
-	t_philo		*philos;
+	t_thinker		*philos;
 	int			i;
 
 	dinner = (t_dinner *)arg;
