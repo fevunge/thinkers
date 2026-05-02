@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   thinker.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "thinker.h"
 
 void	call_philos_to_dinner(t_dinner *dinner)
 {
@@ -43,76 +43,76 @@ void	call_philos_to_dinner(t_dinner *dinner)
 	return ;
 }
 
-static t_bool	has_started_simulation(t_philo *philo)
+static t_bool	has_started_simulation(t_thinker *thinker)
 {
 	t_bool	started;
 
-	pthread_mutex_lock(philo->start_lock);
-	started = *philo->start_simulation;
-	pthread_mutex_unlock(philo->start_lock);
+	pthread_mutex_lock(thinker->start_lock);
+	started = *thinker->start_simulation;
+	pthread_mutex_unlock(thinker->start_lock);
 	return (started);
 }
 
 void	*philo_start_launch(void *arg)
 {
-	t_philo		*philo;
+	t_thinker		*thinker;
 
-	philo = (t_philo *)arg;
-	while (!has_started_simulation(philo))
+	thinker = (t_thinker *)arg;
+	while (!has_started_simulation(thinker))
 		ft_usleep(1);
-	if (philo->id % 2 == 0)
+	if (thinker->id % 2 == 0)
 		ft_usleep(1);
-	while (!has_dead_philo(philo))
+	while (!has_dead_philo(thinker))
 	{
-		philo_launch(philo);
-		get_log(philo, SLEEP_LOG);
-		ft_usleep(philo->sleep);
-		get_log(philo, THINK_LOG);
+		philo_launch(thinker);
+		get_log(thinker, SLEEP_LOG);
+		ft_usleep(thinker->sleep);
+		get_log(thinker, THINK_LOG);
 	}
 	return (NULL);
 }
 
-void	philo_launch(t_philo *philo)
+void	philo_launch(t_thinker *thinker)
 {
-    pthread_mutex_lock(philo->left_fork);
-    get_log(philo, TAKE_FORK_LOG);
+    pthread_mutex_lock(thinker->left_fork);
+    get_log(thinker, TAKE_FORK_LOG);
 
-    if (philo->left_fork == philo->right_fork)
+    if (thinker->left_fork == thinker->right_fork)
     {
         // Único filósofo: não tem segundo garfo, espera e morre
-        ft_usleep(philo->die * 2);
-        pthread_mutex_unlock(philo->left_fork);
+        ft_usleep(thinker->die * 2);
+        pthread_mutex_unlock(thinker->left_fork);
         return ;
     }
 
-    pthread_mutex_lock(philo->right_fork);
-    get_log(philo, TAKE_FORK_LOG);
+    pthread_mutex_lock(thinker->right_fork);
+    get_log(thinker, TAKE_FORK_LOG);
 
-    pthread_mutex_lock(philo->meal_lock);
-    get_log(philo, EAT_LOG);
-    philo->has_eaten++;
-    philo->last_meal = ft_time_now();
-    pthread_mutex_unlock(philo->meal_lock);
+    pthread_mutex_lock(thinker->meal_lock);
+    get_log(thinker, EAT_LOG);
+    thinker->has_eaten++;
+    thinker->last_meal = ft_time_now();
+    pthread_mutex_unlock(thinker->meal_lock);
 
-    ft_usleep(philo->eat);
-    pthread_mutex_unlock(philo->left_fork);
-    pthread_mutex_unlock(philo->right_fork);
+    ft_usleep(thinker->eat);
+    pthread_mutex_unlock(thinker->left_fork);
+    pthread_mutex_unlock(thinker->right_fork);
 }
 
-t_bool	philo_starved(t_philo *philo)
+t_bool	philo_starved(t_thinker *thinker)
 {
 	t_milisecond	time_without_eat;
 
-	time_without_eat = ft_time_now() - philo->last_meal;
-	return (time_without_eat > philo->die);
+	time_without_eat = ft_time_now() - thinker->last_meal;
+	return (time_without_eat > thinker->die);
 }
 
-t_bool	has_dead_philo(t_philo *philo)
+t_bool	has_dead_philo(t_thinker *thinker)
 {
 	t_bool	dead;
 
-	pthread_mutex_lock(philo->death_lock);
-	dead = *philo->somebody_die;
-	pthread_mutex_unlock(philo->death_lock);
+	pthread_mutex_lock(thinker->death_lock);
+	dead = *thinker->somebody_die;
+	pthread_mutex_unlock(thinker->death_lock);
 	return (dead);
 }
