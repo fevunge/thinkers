@@ -1,16 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   dinner.c                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: fevunge <fevunge@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/09 16:10:02 by fevunge           #+#    #+#             */
-/*   Updated: 2026/03/16 08:41:27 by fevunge          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "philo.h"
+#include "thinker.h"
 
 static void	provide_forks(t_dinner *dinner)
 {
@@ -43,7 +31,7 @@ static void	start_philos(t_dinner *dinner)
 void	mise_en_place(t_dinner *dinner)
 {
 	dinner->forks = ft_salloc(sizeof(pthread_mutex_t), dinner->args.philos_n);
-	dinner->philos = ft_salloc(sizeof(t_philo), dinner->args.philos_n);
+	dinner->philos = ft_salloc(sizeof(t_thinker), dinner->args.philos_n);
 	dinner->write_lock = ft_salloc(sizeof(pthread_mutex_t), 1);
 	dinner->meal_lock = ft_salloc(sizeof(pthread_mutex_t), 1);
 	dinner->death_lock = ft_salloc(sizeof(pthread_mutex_t), 1);
